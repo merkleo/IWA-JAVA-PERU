@@ -23,6 +23,15 @@ COPY ${JAR_FILE} app.jar
 # JAVA_OPTS to be passed in
 ENV JAVA_OPTS="-Xmx512m -Xss256k"
 
+# Create a non-root user to run the application
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Change ownership of the application jar
+RUN chown appuser:appuser /app.jar
+
+# Switch to non-root user
+USER appuser
+
 # Run the jar file
 # Uncomment if not using WebInspect Agent
 ENTRYPOINT ["java","-jar","/app.jar"]
